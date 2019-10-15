@@ -215,6 +215,41 @@ class Pages extends Admin_Controller
         }
     }
 
+    public function delete($language_slug, $page_id)
+    {
+        if($page = $this->page_model->get($page_id))
+        {
+            if($language_slug=='all')
+            {
+                if($deleted_translations = $this->page_translation_model->where('page_id',$page_id)->delete())
+                {
+                    $deleted_slugs = $this->slug_model->where(array('content_type'=>'page','content_id'=>$page_id))->delete();
+                    $deleted_pages = $this->page_model->delete($page_id);
+                    $this->session->set_flashdata('message', $deleted_pages.' page deleted. There were also '.$deleted_translations.' translations and '.$deleted_slugs.' slugs deleted.');
+                }
+                else
+                {
+                    $deleted_pages = $this->page_model->delete($page_id);
+                    $this->session->set_flashdata('message', $deleted_pages.' page was deleted');
+                }
+            }
+            else
+            {
+                if($this->page_translation_model->where(array('page_id'=>$page_id,'language_slug'=>$language_slug))->delete())
+                {
+                    $deleted_slugs = $this->slug_model->where(array('content_type'=>'page','language_slug'=>$language_slug,'content_id'=>$page_id))->delete();
+                    $this->session->set_flashdata('message', 'The translation and '.$deleted_slugs.' slugs were deleted.');
+                }
+            }
+        }
+        else
+        {
+            $this->session->set_flashdata('message', 'There is no translation to delete.');
+        }
+        redirect('admin/pages','refresh');
+ 
+    }
+
     private function _verify_slug($str,$language) {
         $this->load->model('slug_model');
         if($this->slug_model->where(array('url'=>$str,'language_slug'=>$language))->get() !== FALSE) {
