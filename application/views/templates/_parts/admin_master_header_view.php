@@ -27,8 +27,15 @@ aria-expanded="false" aria-controls="navbar">
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li><a href="#">A link</a></li>
-        <li><a href="#">Another link</a></li>
+        <?php
+          if($this->ion_auth->is_admin()) {
+        ?>
+          <li><a href="<?php echo site_url('admin/groups'); ?>">Groups</a></li>
+          <li><a href="<?php echo site_url('admin/users'); ?>">Users</a></li>
+          <li><a href="<?php echo site_url('admin/pages'); ?>">Pages</a></li>
+        <?php
+          }
+        ?>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -38,15 +45,13 @@ aria-expanded="false" aria-controls="navbar">
             <?php
               if($this->ion_auth->is_admin()) {
             ?>
-              <li><a href="<?php echo site_url('admin/groups'); ?>">Groups</a></li>
-              <li><a href="<?php echo site_url('admin/users'); ?>">Users</a></li>
               <li><a href="<?php echo site_url('admin/verify'); ?>">Verify Framework</a></li>
+              <li><a href="<?php echo site_url('admin/languages');?>">Languages</a></li>
             <?php
               }
             ?>
               <li class="divider"></li>
               <li><a href="<?php echo site_url('admin/user/profile');?>">Profile page</a></li>
-              <li><a href="<?php echo site_url('admin/languages');?>">Languages</a></li>
               <li class="divider"></li>
               <li><a href="<?php echo site_url('admin/user/logout');?>">Logout</a></li>
           </ul>
